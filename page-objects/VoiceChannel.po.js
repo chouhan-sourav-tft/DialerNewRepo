@@ -290,7 +290,7 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
     historyComment: '#voice-history-list li:nth-child(2) .smart-timeline-content div p:nth-child(6)',
     historyTab: '#voice-tab-voice-history',
     callbackScriptNextTime: '//div[@class="xdsoft_time xdsoft_disabled xdsoft_disabled"][last()]/following-sibling::div[1]',
-    comment:'//ul[@id="voice-history-list"]/li[last()]//div[contains(@class,"well ")]/p[last()]',
+    comment: '//ul[@id="voice-history-list"]/li[last()]//div[contains(@class,"well ")]/p[last()]',
     nextMonthButton: '//div[contains(@class,"xdsoft_datetimepicker")][last()]//div[contains(@class,"xdsoft_datepicker active")]//button[contains(@class,"xdsoft_next")]',
     globalMaxTries: '#global-max-tries',
     inboundCallHeader: '#wid-id-2 header',
@@ -311,10 +311,12 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
    * @return {void} Nothing
    */
   async makeACall(type = '') {
-    // waiting to enable call button
-    await this.wait(4);
-    await this.waitForSelector(this.elements.callNumberButton, type);
-    await this.click(this.elements.callNumberButton, type);
+      // waiting to enable call button
+      await this.wait(4);
+    if (await this.isVisible(this.elements.callNumberButton)) {
+      await this.waitForSelector(this.elements.callNumberButton, type);
+      await this.click(this.elements.callNumberButton, type);
+    }
     // waiting for call to connect
     await this.wait(3);
   }
@@ -482,7 +484,7 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
     await this.wait(5); // wait for call to be connected
     if (await this.isVisible(this.elements.breaksDropdown, type))
       await this.click(this.elements.callNumberLabel, type);
-    if(await this.isVisible(this.elements.callDisconnectButton, type))
+    if (await this.isVisible(this.elements.callDisconnectButton, type))
       await this.click(this.elements.callDisconnectButton, type);
   }
 
@@ -496,7 +498,7 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
   async submitOutcomes(outcomeGroup, outcomeName, type = '') {
     let outcomeGroupSelector = `//*[contains(text(),'${outcomeGroup}')]`;
     await this.waitForSelector(outcomeGroupSelector, type);
-    if(!await this.isVisible(outcomeGroupSelector,type)){
+    if (!await this.isVisible(outcomeGroupSelector, type)) {
       await this.click(this.elements.outcomesTab);
     }
     await this.click(outcomeGroupSelector, type);
@@ -571,12 +573,12 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
    * @return {void} Nothing
    */
   async selectCampaign(outbound, type = '') {
-    if(await this.isVisible(this.elements.outboundSelectClick, type)){
+    if (await this.isVisible(this.elements.outboundSelectClick, type)) {
       await this.click(this.elements.outboundSelectClick, type);
-    }else{
+    } else {
       await this.click(this.elements.selectOutbound, type);
     }
-    
+
     await this.type(this.elements.outboundSelect, outbound, type);
     await this.pressKey('Enter', type);
     await this.click(this.elements.voiceSubmit, type);
@@ -660,7 +662,7 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
    * @returns {void} nothing
    */
   async verifyAndClickPhoneNumber(phoneNumber, type = '') {
-    if(await this.isVisible(this.elements.phoneNumberButton)){
+    if (await this.isVisible(this.elements.phoneNumberButton)) {
       await this.waitForSelector(this.elements.phoneNumberButton, type);
       await this.shouldVisible(this.elements.phoneNumberButton, type);
       await this.shouldContainText(
@@ -670,7 +672,7 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
       );
       await this.click(this.elements.phoneNumberButton, type);
     }
-    
+
   }
 
   /**
@@ -692,9 +694,9 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
    * @param  {string} type type of window
    * @return {void} Nothing
    */
-  async transferCall(type='') {
-    await this.waitForSelector(this.elements.transferCallButton,type);
-    await this.click(this.elements.transferCallButton,type);
+  async transferCall(type = '') {
+    await this.waitForSelector(this.elements.transferCallButton, type);
+    await this.click(this.elements.transferCallButton, type);
   }
 
   /**
@@ -703,10 +705,10 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
    * @param  {string} type type of window
    * @return {void} Nothing
    */
-  async selectTransferTab(transferType,type='') {
+  async selectTransferTab(transferType, type = '') {
     const locator = `#voice-transfer-widget-div ul.nav li[data-active-tab="${transferType}"]`;
-    await this.waitForSelector(locator,type);
-    await this.click(locator,type);
+    await this.waitForSelector(locator, type);
+    await this.click(locator, type);
   }
 
   /**
@@ -815,7 +817,7 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
    * @param  {} type - name of window
    * @returns {void} nothing
    */
-  async transferCallToQueue(queueName,type='') {
+  async transferCallToQueue(queueName, type = '') {
     await this.click(this.elements.ivrToggleButton, type);
     const locator = `span[title="${queueName}"]`;
     await this.waitForSelector(locator, type);
@@ -829,9 +831,9 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
    * @param  {} type - type of window
    * @return {void} Nothing
    */
-  async muteQueueOriginalCall(type='') {
-    await this.waitForSelector(this.elements.muteCallQueueButton,type);
-    await this.click(this.elements.muteCallQueueButton,type);
+  async muteQueueOriginalCall(type = '') {
+    await this.waitForSelector(this.elements.muteCallQueueButton, type);
+    await this.click(this.elements.muteCallQueueButton, type);
   }
 
   /**
@@ -839,7 +841,7 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
    * @param  {string} transferType - type of transfer to be made
    * @param  {} type - type of window
    */
-  async transferACall(transferType, type='') {
+  async transferACall(transferType, type = '') {
     const locator = `//button[text() = '${transferType}']`;
     await this.click(locator, type);
     if (transferType === 'Assisted Transfer')
@@ -1420,7 +1422,7 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
    * @return {void} Nothing
    */
   async createOutcome(outcome, attribute, isNewCampaign = false) {
-    if(isNewCampaign === false){
+    if (isNewCampaign === false) {
       await this.click(this.elements.addOutcomeBtn);
     }
     await this.waitForSelector(this.elements.outcomeNameInput);
@@ -1727,9 +1729,9 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
    **/
   async selectCampaignAndQueue(outboundCampaign, inboundQueue, type = '') {
     if (outboundCampaign !== 'No') {
-      if(await this.isVisible(this.elements.outboundSelectClick, type)){
+      if (await this.isVisible(this.elements.outboundSelectClick, type)) {
         await this.click(this.elements.outboundSelectClick, type);
-      }else{
+      } else {
         await this.click(this.elements.selectOutbound, type);
       }
       await this.type(this.elements.outboundSelect, outboundCampaign, type);
@@ -2405,12 +2407,12 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
   async getPhoneNumber() {
     await this.wait(5);//wait to load phone
     let displayNumber = '';
-    if(await this.isVisible(this.elements.phoneNumberButton)){
+    if (await this.isVisible(this.elements.phoneNumberButton)) {
       await this.waitForSelector(this.elements.phoneNumberButton);
       await this.shouldVisible(this.elements.phoneNumberButton);
       displayNumber = await this.getText(this.elements.phoneNumberButton);
     }
-    if(await this.isVisible(this.elements.phoneNumberText)){
+    if (await this.isVisible(this.elements.phoneNumberText)) {
       await this.waitForSelector(this.elements.phoneNumberText);
       await this.shouldVisible(this.elements.phoneNumberText);
       displayNumber = await this.getText(this.elements.phoneNumberText);
@@ -2635,9 +2637,9 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
    * @param {string} mainOption - parent option
    * @returns {void} nothing 
    */
-  async activateLeadSearchOption(subOption, mainOption){
+  async activateLeadSearchOption(subOption, mainOption) {
     let leadSearchOption = `//span[contains(.,'${mainOption}')]/parent::label/following-sibling::div[@id='lead-search-settings-container']//span[contains(.,'${subOption}')]`;
-    if(await this.isVisible(leadSearchOption)){
+    if (await this.isVisible(leadSearchOption)) {
       await this.checkToCheckbox(leadSearchOption);
     }
   }
@@ -2647,7 +2649,7 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
    * @param {string} type - Window session
    * @returns {void} nothing 
    */
-  async clickSearchTab(type = ''){
+  async clickSearchTab(type = '') {
     await this.wait(4);//wait to load panel
     await this.waitForSelector(this.elements.searchLocator, type);
     await this.click(this.elements.searchLocator, type);
@@ -2660,7 +2662,7 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
    * @param {string} type - Window session
    * @returns {void} nothing 
    */
-  async searchClosedContact(contact, type){
+  async searchClosedContact(contact, type) {
     await this.waitForSelector(this.elements.searchContact, type);
     await this.type(this.elements.searchContact, contact, type);
     await this.pressKey('Enter', type);
@@ -2675,7 +2677,7 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
    * @param {string} type - Window session
    * @returns {void} nothing 
    */
-  async validateCustomerRecord(name, dbName, type){
+  async validateCustomerRecord(name, dbName, type) {
     await this.waitForSelector(this.elements.contactName, type);
     const expectedName = await this.getAttributeValue(this.elements.contactName, type);
     await this.shouldHasText(expectedName, name);
@@ -2689,7 +2691,7 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
    * @param {string} type - Window session
    * @returns {void} nothing 
    */
-  async clickContactButtons(buttonName, type){
+  async clickContactButtons(buttonName, type) {
     let tabLocator = `//div[@id='tab-voice-search']//span[contains(.,'${buttonName}')]`;
     await this.waitForSelector(tabLocator, type);
     await this.click(tabLocator, type);
@@ -2702,7 +2704,7 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
    * @param {string} type - Window session
    * @returns {void} nothing 
    */
-  async searchClosedContactInSimilarContact(contact, type){
+  async searchClosedContactInSimilarContact(contact, type) {
     await this.waitForSelector(this.elements.contactTable, type);
     let closedContact = `(//table[@id='voice-contact-search-datatable']/tbody/tr/td[contains(.,'${contact}')])[last()]`;
     await this.verifyVisibility(closedContact, false);
@@ -2712,13 +2714,13 @@ exports.VoiceChannel = class VoiceChannel extends BaseAction {
    * @param {string} callType - call type
    * @returns {void} nothing 
    */
-  async validateMaskedNumber(callType){
+  async validateMaskedNumber(callType) {
     // waiting for call number to appear
     await this.wait(2);
-    if(callType === 'inbound'){
+    if (callType === 'inbound') {
       await this.waitForSelector(this.elements.inboundCallNumberText);
       await this.shouldContainText(this.elements.inboundCallNumberText, '***');
-    }else if (callType === 'outbound'){
+    } else if (callType === 'outbound') {
       await this.waitForSelector(this.elements.outboundCallNumberText);
       await this.shouldContainText(this.elements.outboundCallNumberText, '***');
     }

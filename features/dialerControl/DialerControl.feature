@@ -13,7 +13,7 @@ Feature: Dialer Control
         Then user navigates to 'General Settings' tab
         Then user configure Global Max tries with value '0'
         When user navigates to dialer
-        Then select the dialer type 'power-preview'
+        Then select the dialer type 'power'
         And save the changes in edit campaign
         When user navigates to dialer control menu
         And user selects 'OutboundCampaign_3' campaign in dialer control
@@ -581,7 +581,7 @@ Feature: Dialer Control
         Then user choose the following configurations in dialer control menu:
             | campaign             | OutboundCampaign_3   |
             | sortContactsPriority | By outcome and field |
-            | ratio                | 1                    |
+            # | ratio                | 1                    |
         And login to Voice Channel with '100' extension
         And user selects 'OutboundCampaign_3' campaign
         Then verify all contacts loaded in the database are triggered by the dialer
@@ -625,6 +625,44 @@ Feature: Dialer Control
             | number    | outcomeGroup     | outcomeName |
             | 999999999 | Call Again Later | Ok          |
             | 123       | Call Again Later | Ok          |
+        When Navigate to Database Manager
+        Then user click the previously created DB
+        And user validate that all contacts are closed by 'Closed'
+
+    @5721
+    Scenario: Power Preview: sort by outcome - rule with phone1 (invalid)
+        When user navigates to dialer
+        Then select the dialer type 'power-preview'
+        And select the Preview Dial Timeout '15'
+        Then user navigates to Dialer rules manager tab
+        And user configure the folllowing rule:
+            | dialerName     | Rule_1   |
+            | phone          | 2        |
+            | startHour      | 09:00    |
+            | endHour        | 23:00    |
+            | maxDialerTries | 3        |
+        Then user click on the recycle button
+        When user set the following values in the recycle form:
+            | callOutcome | recycleInterval | maxTries |
+            | Block       | 4h              | 3        |
+        And user clicks the finish button
+        When Navigate to Database Manager
+        And Create Database
+            | browseFile            | databaseCampaign | optionName | optionPhone1 | optionPhone2 |
+            | fixtures/GO5721.csv   | 3                | 0          | 1            | 2            |
+        Then load the database
+            | browseFile            | numOfColumnsToUpload | databaseCampaign | optionName | optionPhone1 | optionPhone2 | 
+            | fixtures/GO5721.csv   | 1                    | 3                | 0          | 1            | 2            |
+        When user navigates to dialer control menu
+        Then user choose the following configurations in dialer control menu:
+            | campaign             | OutboundCampaign_3   |
+            | sortContactsPriority | By outcome and field |
+        And login to Voice Channel with '100' extension
+        And user selects 'OutboundCampaign_3' campaign
+        And let user wait for '15' seconds
+        Then verify that contacts are triggered
+            | number     | outcomeGroup     | outcomeName |
+            | 8517856520 | Call Again Later | Ok          |
         When Navigate to Database Manager
         Then user click the previously created DB
         And user validate that all contacts are closed by 'Closed'

@@ -17,6 +17,7 @@ exports.Database = class Database extends BaseAction {
     uploadDatabase: '#upload_new_db',
     selectContactName: '//select[@id="contact"]',
     selectPhoneField: '//select[@id="first_phone"]',
+    selectPhoneField2: '//select[@id="second_phone"]',
     selectEmailField: '//select[@id="email"]',
     selectPostalField: '//select[@id="postal_code"]',
     selectCityField: '//select[@id="city"]',
@@ -119,6 +120,13 @@ exports.Database = class Database extends BaseAction {
       await this.dropdownOptionSelect(
         this.elements.selectPhoneField,
         databaseDetails.optionPhone1
+      );
+    }
+    if (databaseDetails.optionPhone2) {
+      // await this.wait(2); //Require time to load the dropdown values
+      await this.dropdownOptionSelect(
+        this.elements.selectPhoneField2,
+        databaseDetails.optionPhone2
       );
     }
     if (databaseDetails.optionEmail) {

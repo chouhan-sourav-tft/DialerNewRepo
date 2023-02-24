@@ -81,13 +81,18 @@ When('user navigates to Dialer rules manager tab', async () => {
 
 Then('user configure the folllowing rule:', async (dataTable) => {
   const dialerRule = dataTable.rowsHash();
-  dialerRule.dialerName = dialerRule.dialerName + new Date().getTime();
+  // dialerRule.dialerName = dialerRule.dialerName + new Date().getTime();
   await dialerControl.fillDialerRules(dialerRule);
 });
 
 Then('user click on the recycle button', async () => {
   await dialerControl.clickRecycleButton();
 });
+
+Then('user click on the recycle button for {string} time', async(clickTime) => {
+  await dialerControl.clickRecycleButtonSecondTime(clickTime);
+
+})
 
 When('user set the following values in the recycle form:', async (dataTable) => {
   let settingData = '';
@@ -99,6 +104,18 @@ When('user set the following values in the recycle form:', async (dataTable) => 
     };
   });
   await dialerControl.recycleSettings(settingData);
+});
+
+When('user set the following values in the recycle form for {string} time:', async (recycleTime, dataTable) => {
+  let settingData = '';
+  dataTable.hashes().forEach(async (element) => {
+    settingData = {
+      callOutcome: element.callOutcome,
+      recycleInterval: element.recycleInterval,
+      maxTries: element.maxTries
+    };
+  });
+  await dialerControl.recycleSettingsDynamic(recycleTime, settingData);
 });
 
 Then('user clicks the finish button', async () => {
@@ -139,3 +156,7 @@ Then('verify that contacts are triggered', async (datatable) => {
     await baseAction.wait(5); 
   }
 })
+
+When('user click on the add rule button', async() => {
+  await dialerControl.clickAddRuleButton();
+});
